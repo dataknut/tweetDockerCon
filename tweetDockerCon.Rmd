@@ -159,7 +159,7 @@ To extract and visualise tweets and re-tweets of `#dockercon` for 17 - 21 April,
 Borrowing extensively from http://thinktostart.com/twitter-authentification-with-r/
 
 # Load Data
-Data should have been alreaady downloaded using `collectData.R`. This produces a data table with the following variables (after some processing):
+Data should have been already downloaded using `collectData.R`. This produces a data table with the following variables (after some processing):
 
 ```{r loadData}
 tweetListDT <- data.table(read_csv("tweetListDT.csv")) # requires readr, auto-parses dateTimes nicely
