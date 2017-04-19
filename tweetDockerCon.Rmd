@@ -192,16 +192,48 @@ myCaption <- paste0("All (re)tweets containing #dockercon ",
 
 ```{r allDaysChart, fig.height=8, fig.width=9, fig.cap=myCaption}
 
-ggplotly(ba_make5MinTimeSeriesChart(tweetListDT, 
+myPlot <- ba_make5MinTimeSeriesChart(tweetListDT, 
                                 byVars = c("obsDateTime5m,isRetweet"),
                                 facetForm = c("isRetweet ~ .")
                                 )
-)
 
+myPlot
+
+myPlot + 
+  annotate("rect", 
+           xmin = as.POSIXct("2017-04-18 09:00:00"), 
+           xmax = as.POSIXct("2017-04-18 09:15:00"), 
+           ymin = 0, 
+           ymax = 100, alpha = .2) +
+  annotate("text", 
+           x = as.POSIXct("2017-04-18 09:00:00"), 
+           y = 100,
+           label = c("Ben Golub's keynote")
+           ) +
+  annotate("rect", 
+           xmin = as.POSIXct("2017-04-19 09:00:00"), 
+           xmax = as.POSIXct("2017-04-19 09:15:00"), 
+           ymin = 0, 
+           ymax = 80, alpha = .2) +
+  annotate("text", 
+           x = as.POSIXct("2017-04-19 09:00:00"), 
+           y = 80,
+           label = c("Day 2 general session")
+           ) +
+annotate("rect", 
+           xmin = as.POSIXct("2017-04-19 16:45:00"), 
+           xmax = as.POSIXct("2017-04-19 17:00:00"), 
+           ymin = 0, 
+           ymax = 100, alpha = .2) +
+  annotate("text", 
+           x = as.POSIXct("2017-04-19 16:45:00"), 
+           y = 100,
+           label = c("Docker Cool hacks session")
+           )
 ```
 
 ## Location (lat/long)
-We want to make a nice map but sadly we see that most tweets have no lat/long set.
+We wanted to make a nice map but sadly we see that most tweets have no lat/long set.
 
 ```{r latLongPlot}
 plotDT <- tweetListDT[, 
