@@ -274,7 +274,7 @@ myPlot <- ggplot(plotDT, aes(x = obsDateTime5m)) +
          y = "Screen name"
     )
 
-myPlot
+ggplotly(myPlot)
 ```
 
 So let's re-do that for the top 50 tweeters.
@@ -316,7 +316,7 @@ myPlot <- ggplot(plotDT, aes(x = obsDateTime5m)) +
          y = "Screen name"
     )
 
-myPlot
+ggplotly(myPlot)
 ```
 
 # About
