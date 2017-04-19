@@ -61,7 +61,7 @@ ba_tidyNum <- function(number) {
 # some things we'll use later
 ba_setUseFullTimes <- function(dt){
   # set to central time
-  dt <- dt[, createdLocal := with_tz(created, tz = Sys.timezone())]
+  dt <- dt[, createdLocal := with_tz(created, tz = "America/Chicago")] # Austin local
   # convert created to minutes
   dt <- dt[,
            obsDateTimeMins := floor_date(createdLocal, # requires lubridate
@@ -164,9 +164,14 @@ Data should have been already downloaded using `collectData.R`. This produces a 
 ```{r loadData}
 tweetListDT <- data.table(read_csv("tweetListDT.csv")) # requires readr, auto-parses dateTimes nicely
 
-# add stuff
+# add stuff (especially dates & times corrected to local Austin time)
 tweetListDT <- ba_setUseFullTimes(tweetListDT)
 
+# keep the data within the time period of interest
+# note that this selects according to CDT which seems the most relevant
+tweetListDT <- tweetListDT[as.Date(obsDateTimeMins) >= as.Date("2017-04-17", tz = "America/Chicago") &
+                             as.Date(obsDateTimeMins) <= as.Date("2017-04-21", tz = "America/Chicago")
+                             ]
 names(tweetListDT)
 ```
 
