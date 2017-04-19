@@ -323,7 +323,7 @@ myPlot
 
 Analysis completed in: `r round(Sys.time() - startTime, 2)` seconds using [knitr](https://cran.r-project.org/package=knitr) in [RStudio](http://www.rstudio.com) with `r R.version.string` running on `r R.version$platform`.
 
-A special mention must go to [`twitteR`](https://github.com/geoffjentry/twitteR) for the twitter API interaction functions and `lubridate` [`lubridate`](https://github.com/hadley/lubridate) which allows timezone manipulation without tears.
+A special mention must go to `twitteR` [@twitteR] for the twitter API interaction functions and `lubridate` [@lubridate] which allows timezone manipulation without tears.
 
 Other R packages used:
 
