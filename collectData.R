@@ -9,7 +9,7 @@ library(readr)
 # Only results from the last week (7 days?) will be returned
 # https://dev.twitter.com/rest/public/search
 
-maxTweets <- 40000
+maxTweets <- 40000 # let's hope this is enough!
 
 tweetListDT <- data.table(twListToDF(searchTwitter("#dockercon", 
                                         since = "2017-04-16", # exclusive - NB this is UTC
