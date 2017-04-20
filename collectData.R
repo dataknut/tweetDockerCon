@@ -3,12 +3,11 @@ library(data.table)
 library(twitteR)
 library(readr)
 
-# this needs to be large enough to collect all of them - the API returns a warning if there 
-# are less than this but not a wanring if there are more!!
-
 # Only results from the last week (7 days?) will be returned
 # https://dev.twitter.com/rest/public/search
 
+# this needs to be large enough to collect all of them - the API returns a warning if there 
+# are less than this but not a wanring if there are more!!
 maxTweets <- 10000 # let's hope this is enough!
 
 tweetListD1DT <- data.table(twListToDF(searchTwitter("#dockercon", 
