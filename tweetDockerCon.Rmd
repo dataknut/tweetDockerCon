@@ -73,17 +73,6 @@ ba_setUseFullTimes <- function(dt){
                                          unit="hours"
            )
            ]
-  dt <- dt[, obsMin := as.POSIXlt(obsDateTimeMins)$min]
-  dt <- dt[, obsHour := as.POSIXlt(obsDateTimeMins)$hour]
-  
-  dt <- dt[, obsQH := ifelse(obsMin < 15, "00", NA)]
-  dt <- dt[, obsQH := ifelse(obsMin >= 15, "15", obsQH)]
-  dt <- dt[, obsQH := ifelse(obsMin >= 30, "30", obsQH)]
-  dt <- dt[, obsQH := ifelse(obsMin >= 45, "45", obsQH)]
-  
-  # set q hour (useful for charts)
-  dt <- dt[, obsQHour := paste0(dt$obsHour,":", dt$obsQH)
-           ]
   dt <- dt[,
            obsDateTime5m := floor_date(createdLocal, # requires lubridate
                                          unit="5 minutes"
@@ -99,6 +88,19 @@ ba_setUseFullTimes <- function(dt){
                                          unit="15 minutes"
            )
            ] 
+  
+  dt <- dt[, obsDate := as.Date(obsDateTimeMins, tz = "America/Chicago")]
+
+  # test
+  #t <- tweetListDT[, .(createdLocal, obsDate, obsDateTimeMins)]
+  
+  dt <- dt[, isRetweetLab := ifelse(isRetweet == "FALSE",
+                                    "Original tweet",
+                                    "Re-tweet"
+                                    )
+           ]
+  # check
+  #table(tweetListDT$isRetweet,tweetListDT$isRetweetLab)
   return(dt)
 }
 
@@ -117,7 +119,7 @@ ba_make5MinTimeSeriesChart <- function(dt,byVars,facetForm){
     geom_line(aes(y = nTweets, colour = "N tweets")) +
     geom_line(aes(y = nTweeters, colour = "N tweeters")) +
     facet_grid(eval(facetForm)) +
-    theme(strip.text.y = element_text(size = 9, colour = "black", angle = 0)) +
+    theme(strip.text.y = element_text(size = 9, colour = "black", angle = 90)) +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5)) +
     scale_x_datetime(date_breaks = "2 hours", date_labels ="%a %d %b %H:%M") +
     theme(legend.position = "bottom") +
@@ -162,7 +164,14 @@ Borrowing extensively from http://thinktostart.com/twitter-authentification-with
 Data should have been already downloaded using `collectData.R`. This produces a data table with the following variables (after some processing):
 
 ```{r loadData}
-tweetListDT <- data.table(read_csv("tweetListDT.csv")) # requires readr, auto-parses dateTimes nicely
+tweetListDT <- data.table()
+
+for(d in 1:5){
+  file <- paste0("tweetListD", d, "DT.csv")
+  tweetListDT <- rbind(tweetListDT,data.table(read_csv(file)))
+}
+
+#tweetListDT <- data.table(read_csv("tweetListDT.csv")) # requires readr, auto-parses dateTimes nicely
 
 # add stuff (especially dates & times corrected to local Austin time)
 tweetListDT <- ba_setUseFullTimes(tweetListDT)
@@ -172,6 +181,9 @@ tweetListDT <- ba_setUseFullTimes(tweetListDT)
 tweetListDT <- tweetListDT[as.Date(obsDateTimeMins) >= as.Date("2017-04-17", tz = "America/Chicago") &
                              as.Date(obsDateTimeMins) <= as.Date("2017-04-21", tz = "America/Chicago")
                              ]
+
+
+
 names(tweetListDT)
 ```
 
@@ -185,21 +197,47 @@ The table has `r ba_tidyNum(nrow(tweetListDT[isRetweet == "FALSE"]))` tweets (an
 myCaption <- paste0("All (re)tweets containing #dockercon ", 
                       min(as.Date(tweetListDT$obsDateTime5m)),
                           " to ",
-                          max(as.Date(tweetListDT$obsDateTime5m)),
-                    "\nFALSE = tweets, TRUE = re-tweets"
+                          max(as.Date(tweetListDT$obsDateTime5m))
                           )
 ```
 
 ```{r allDaysChart, fig.height=8, fig.width=9, fig.cap=myCaption}
 
 myPlot <- ba_make5MinTimeSeriesChart(tweetListDT, 
-                                byVars = c("obsDateTime5m,isRetweet"),
-                                facetForm = c("isRetweet ~ .")
+                                byVars = c("obsDateTime5m,isRetweetLab"),
+                                facetForm = c("isRetweetLab ~ .")
                                 )
 
 myPlot
 
-myPlot + 
+#ggplotly(myPlot)
+```
+
+### Day 1 - Monday (Workshops)
+
+```{r day1Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
+myCaption <- paste0("All (re)tweets containing #dockercon Monday 17th April 2017")
+
+myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-04-17"], 
+                                byVars = c("obsDateTime5m,isRetweetLab"),
+                                facetForm = c("isRetweetLab ~ .")
+                                )
+
+myPlot
+
+#ggplotly(myPlot)
+```
+
+### Day 2 - Tuesday (Main Day 1)
+
+```{r day2Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
+myCaption <- paste0("All (re)tweets containing #dockercon Tuesday 18th April 2017")
+
+myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-04-18"], 
+                                byVars = c("obsDateTime5m,isRetweetLab"),
+                                facetForm = c("isRetweetLab ~ .")
+                                )
+myPlot <- myPlot + 
   annotate("rect", 
            xmin = as.POSIXct("2017-04-18 09:00:00"), 
            xmax = as.POSIXct("2017-04-18 09:15:00"), 
@@ -208,29 +246,92 @@ myPlot +
   annotate("text", 
            x = as.POSIXct("2017-04-18 09:00:00"), 
            y = 100,
-           label = c("Ben Golub's keynote")
-           ) +
-  annotate("rect", 
+           label = c("Ben Golub: Day 1 keynote")
+           ) 
+
+
+ggplotly(myPlot)
+```
+
+
+### Day 3 - Wednesday (Main Day 2)
+
+```{r day3Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
+myCaption <- paste0("All (re)tweets containing #dockercon Wednesday 19th April 2017")
+myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-04-19"], 
+                                byVars = c("obsDateTime5m,isRetweetLab"),
+                                facetForm = c("isRetweetLab ~ .")
+                                )
+myPlot + annotate("rect", 
            xmin = as.POSIXct("2017-04-19 09:00:00"), 
-           xmax = as.POSIXct("2017-04-19 09:15:00"), 
+           xmax = as.POSIXct("2017-04-19 10:30:00"), 
            ymin = 0, 
            ymax = 80, alpha = .2) +
   annotate("text", 
            x = as.POSIXct("2017-04-19 09:00:00"), 
-           y = 80,
-           label = c("Day 2 general session")
+           y = 90,
+           label = c("Day 2: General session 1")
            ) +
-annotate("rect", 
+  annotate("rect", 
            xmin = as.POSIXct("2017-04-19 16:45:00"), 
-           xmax = as.POSIXct("2017-04-19 17:00:00"), 
+           xmax = as.POSIXct("2017-04-19 17:30:00"), 
            ymin = 0, 
-           ymax = 100, alpha = .2) +
+           ymax = 80, alpha = .2) +
   annotate("text", 
            x = as.POSIXct("2017-04-19 16:45:00"), 
-           y = 100,
-           label = c("Docker Cool hacks session")
+           y = 90,
+           label = c("Day 2: Cool Hacks")
            )
+# annotate("rect", 
+#            xmin = as.POSIXct("2017-04-19 16:45:00"), 
+#            xmax = as.POSIXct("2017-04-19 16:50:00"), 
+#            ymin = 0, 
+#            ymax = 100, alpha = .2) +
+#   annotate("text", 
+#            x = as.POSIXct("2017-04-19 16:45:00"), 
+#            y = 100,
+#            label = c("Docker Cool hacks: \n@xetorthio @marcosnils")
+#            ) +
+# annotate("rect", 
+#            xmin = as.POSIXct("2017-04-19 17:05:00"), 
+#            xmax = as.POSIXct("2017-04-19 17:10:00"), 
+#            ymin = 0, 
+#            ymax = 100, alpha = .2) +
+#   annotate("text", 
+#            x = as.POSIXct("2017-04-19 17:05:00"), 
+#            y = 80,
+#            label = c("Docker Cool hacks: \n@alexellisuk")
+#            ) +
+# annotate("rect", 
+#            xmin = as.POSIXct("2017-04-19 17:20:00"), 
+#            xmax = as.POSIXct("2017-04-19 17:25:00"), 
+#            ymin = 0, 
+#            ymax = 100, alpha = .2) +
+#   annotate("text", 
+#            x = as.POSIXct("2017-04-19 17:20:00"), 
+#            y = 60,
+#            label = c("Ben Golub: \nDockerCon18")
+#            )
+
+
+#ggplotly(myPlot)
 ```
+
+
+### Day 4 - Thursday (Main Day 3)
+
+```{r day4Chart, eval = FALSE, fig.height=8, fig.width=9, fig.cap=myCaption}
+myCaption <- paste0("All (re)tweets containing #dockercon Thursday 20th April 2017")
+myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == as.Date("2017-04-20")], 
+                                byVars = c("obsDateTime5m,isRetweetLab"),
+                                facetForm = c("isRetweetLab ~ .")
+                                )
+myPlot
+
+
+#ggplotly(myPlot)
+```
+
 
 ## Location (lat/long)
 We wanted to make a nice map but sadly we see that most tweets have no lat/long set.
