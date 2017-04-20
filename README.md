@@ -5,7 +5,7 @@ To do this we are collecting &amp; visualising #dockercon tweets for the entire 
 
 ![DockerCon Day 1 tweetFlow](day1.png)
 
-For full results (to date) which include all days, more days, tweeing locations and visualisations of tweetStreaks by the most prolific tweeters see:
+For full results (to date) which include all days, more days, tweeing locations, zoomable charts and visualisations of tweetStreaks by the most prolific tweeters see:
 
  * Latest [results](tweetDockerCon.html) - be careful, some of the inline charts are quite big
  * [Code](https://github.com/dataknut/tweetDockerCon)
