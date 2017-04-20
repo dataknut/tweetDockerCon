@@ -1,6 +1,6 @@
 # Run the twitter authentication for this app
-# Runs unteractively and needs internet access as it uses browser based authentication
-# Should only ever need to run once as it creates am .oauth file in this directory
+# Runs interactively and needs internet access as it uses browser based authentication
+# Should only ever need to run once as it creates an .oauth file in this directory
 
 # You will need:
 # uncomment to install if needed
