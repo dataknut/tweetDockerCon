@@ -314,13 +314,13 @@ myPlot + annotate("rect",
 #            )
 
 
-#ggplotly(myPlot)
+ggplotly(myPlot)
 ```
 
 
 ### Day 4 - Thursday (Main Day 3)
 
-```{r day4Chart, eval = FALSE, fig.height=8, fig.width=9, fig.cap=myCaption}
+```{r day4Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
 myCaption <- paste0("All (re)tweets containing #dockercon Thursday 20th April 2017")
 myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == as.Date("2017-04-20")], 
                                 byVars = c("obsDateTime5m,isRetweetLab"),
