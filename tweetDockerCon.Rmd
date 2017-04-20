@@ -215,6 +215,8 @@ myPlot
 
 ### Day 1 - Monday (Workshops)
 
+This plot is zoomable - try it!
+
 ```{r day1Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
 myCaption <- paste0("All (re)tweets containing #dockercon Monday 17th April 2017")
 
@@ -229,6 +231,8 @@ ggplotly(myPlot)
 ```
 
 ### Day 2 - Tuesday (Main Day 1)
+
+This plot is zoomable - try it!
 
 ```{r day2Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
 myCaption <- paste0("All (re)tweets containing #dockercon Tuesday 18th April 2017")
@@ -255,6 +259,8 @@ ggplotly(myPlot)
 
 
 ### Day 3 - Wednesday (Main Day 2)
+
+This plot is zoomable - try it!
 
 ```{r day3Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
 myCaption <- paste0("All (re)tweets containing #dockercon Wednesday 19th April 2017")
