@@ -223,9 +223,9 @@ myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-04-17"],
                                 facetForm = c("isRetweetLab ~ .")
                                 )
 
-myPlot
+#myPlot
 
-#ggplotly(myPlot)
+ggplotly(myPlot)
 ```
 
 ### Day 2 - Tuesday (Main Day 1)
