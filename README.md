@@ -8,8 +8,11 @@ To do this we are collecting &amp; visualising #dockercon tweets for the entire 
 For full results (to date) which include all days, more days, tweeing locations, zoomable charts and visualisations of tweetStreaks by the most prolific tweeters see:
 
  * Latest [results](tweetDockerCon.html) - be careful, some of the inline charts are quite big
+ 
+To make comments or analysis requests, raise an issue. 
+ 
  * [Code](https://github.com/dataknut/tweetDockerCon)
  
-To make comments or analysis requests, raise an issue. I can't guarantee to respond but it's worth a go.
+I can't guarantee to respond but it's worth a go.
 
 Or better still, fork & DIY :-)
