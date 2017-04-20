@@ -262,7 +262,7 @@ myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-04-19"],
                                 byVars = c("obsDateTime5m,isRetweetLab"),
                                 facetForm = c("isRetweetLab ~ .")
                                 )
-myPlot + annotate("rect", 
+myPlot <- myPlot + annotate("rect", 
            xmin = as.POSIXct("2017-04-19 09:00:00"), 
            xmax = as.POSIXct("2017-04-19 10:30:00"), 
            ymin = 0, 
@@ -463,7 +463,7 @@ myPlot
 
 Analysis completed in: `r round(Sys.time() - startTime, 2)` seconds using [knitr](https://cran.r-project.org/package=knitr) in [RStudio](http://www.rstudio.com) with `r R.version.string` running on `r R.version$platform`.
 
-A special mention must go to `twitteR` [@twitteR] for the twitter API interaction functions and `lubridate` [@lubridate] which allows timezone manipulation without tears.
+A special mention must go to `twitteR` [@twitteR] for the twitter API interaction functions and `lubridate` [@lubridate] which allows timezone manipulation without too many tears.
 
 Other R packages used:
 
