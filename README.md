@@ -1,7 +1,7 @@
 # tweetDockerCon17
 As well as building a [live #dockerCon tweet monitor](https://finnian.io/blog/tweetdock-at-dockercon/) we though we'd do a bit of visualisation of tweeting behaviour over DockerCon17 April 17-21, 2017.
 
-To do this we are collecting &amp; visualising #dockercon tweets for the entire week, saving them to an archive and then running them through some R processing & analysis code. The chart below is a simple visualisation of the tweetFlow (TM :-) of tweets and re-tweets on Day 1 with the general sessions annotated.
+To do this we are collecting &amp; visualising #dockercon tweets for the entire week, saving them to an archive and then running them through some R processing & analysis code. The chart below is a simple visualisation of the tweetFlow (TM :-) of tweets and re-tweets on Day 1 with the first keynote session 'grey-lighted'.
 
 ![DockerCon Day 1 tweetFlow](day1.png)
 
