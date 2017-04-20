@@ -33,7 +33,7 @@ startTime <- Sys.time()
 ```
 
 ```{r setFunctions}
-# Functions used across all SAVE code
+# Functions used
 
 # This is a function to install any packages that are not present
 # Especially useful when running on virtual machines where package installation is not persistent. Like UoS sve :-(
