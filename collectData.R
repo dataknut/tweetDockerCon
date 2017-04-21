@@ -59,3 +59,13 @@ tweetListD5DT <- data.table(twListToDF(searchTwitter("#dockercon",
 
 # save it out
 write_csv(tweetListD5DT, "tweetListD5DT.csv")
+
+tweetListD6DT <- data.table(twListToDF(searchTwitter("#dockercon", 
+                                                     since = "2017-04-21", # exclusive - NB this is UTC
+                                                     until = "2017-04-22", # inclusive - NB this is UTC
+                                                     n=maxTweets) 
+)
+)
+
+# save it out
+write_csv(tweetListD6DT, "tweetListD6DT.csv")
