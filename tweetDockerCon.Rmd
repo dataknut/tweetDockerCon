@@ -160,7 +160,7 @@ To extract and visualise tweets and re-tweets of `#dockercon` for 17 - 21 April,
 
 Borrowing extensively from http://thinktostart.com/twitter-authentification-with-r/
 
-This uses the Twitter search API to extract 'all' tweets with the `#dockercon` hashtag. As the [Twitter search API documentation](https://dev.twitter.com/rest/public/search) (sort of) makes clear this may not be `all` such tweets but merely the `most relevant` (whatever that means) from within a `sample` (whatever that means). 
+We used the Twitter search API to extract 'all' tweets with the `#dockercon` hashtag. As the [Twitter search API documentation](https://dev.twitter.com/rest/public/search) (sort of) makes clear this may not be `all` such tweets but merely the `most relevant` (whatever that means) from within a `sample` (whatever that means). 
 
 >"It allows queries against the indices of recent or popular Tweets and behaves similarly to, but not exactly like the Search feature available in Twitter mobile or web clients, such as Twitter.com search. The Twitter Search API searches against a sampling of recent Tweets published in the past 7 days." https://dev.twitter.com/rest/public/search, Accessed 12/5/2017
 
