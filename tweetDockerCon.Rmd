@@ -153,6 +153,9 @@ lb_myRequiredPackages(reqLibs,"http://cran.rstudio.com/")
 library(twitteR)
 ```
 
+# Health warning !
+
+Re-running this code on return to the UK has blown the timezones/dateTimes apart and so the graph labels/annotations are mostly worng! We `hate` timezones. Will fix ASAP! @dataknut
 
 # Purpose
 
