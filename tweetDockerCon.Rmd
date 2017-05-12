@@ -154,10 +154,6 @@ lb_myRequiredPackages(reqLibs,"http://cran.rstudio.com/")
 library(twitteR)
 ```
 
-# Health warning !
-
-Re-running this code on return to the UK has blown the timezones/dateTimes apart and so the graph annotations are mostly wrong! We `hate` timezones. Will fix ASAP!
-
 # Purpose
 
 To extract and visualise tweets and re-tweets of `#dockercon` for 17 - 21 April, 2017 (DockerCon17).
