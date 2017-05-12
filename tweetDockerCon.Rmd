@@ -160,6 +160,12 @@ To extract and visualise tweets and re-tweets of `#dockercon` for 17 - 21 April,
 
 Borrowing extensively from http://thinktostart.com/twitter-authentification-with-r/
 
+This uses the Twitter search API to extract 'all' tweets with the `#dockercon` hashtag. As the [Twitter search API documentation](https://dev.twitter.com/rest/public/search) (sort of) makes clear this may not be `all` such tweets but merely the `most relevant` (whatever that means) from within a `sample` (whatever that means). 
+
+>"It allows queries against the indices of recent or popular Tweets and behaves similarly to, but not exactly like the Search feature available in Twitter mobile or web clients, such as Twitter.com search. The Twitter Search API searches against a sampling of recent Tweets published in the past 7 days." https://dev.twitter.com/rest/public/search, Accessed 12/5/2017
+
+It is therefore possible that not quite all tweets have been extracted although it seems likely that we have captured most `human` tweeting which was our main intention. Future work should instead use the Twitter [streaming API](https://dev.twitter.com/streaming/overview).
+
 # Load Data
 Data should have been already downloaded using `collectData.R`. This produces a data table with the following variables (after some processing):
 
@@ -476,7 +482,7 @@ plotDT <- tempDT[matchDT,
                     ), by = .(screenName, obsDateTime5m, maxT)]
 
 plotDT <- plotDT[order(-plotDT$maxT,plotDT$obsDateTime5m)]
-plotDT$screenName <- factor(plotDT$screenName,levels=plotDT$screenName)
+#plotDT$screenName <- factor(plotDT$screenName,levels=plotDT$screenName)
 
 myPlot <- ggplot(plotDT, aes(x = obsDateTime5m)) +
     geom_tile(aes(y = screenName, fill = nTweets)) +
