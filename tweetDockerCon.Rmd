@@ -6,6 +6,7 @@ output:
   html_document:
     keep_md: yes
     number_sections: yes
+    self_contained: no
     toc: yes
     toc_float: yes
   pdf_document:
@@ -253,12 +254,12 @@ myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-04-18"],
                                 )
 myPlot <- myPlot + 
   annotate("rect", 
-           xmin = as.POSIXct("2017-04-18 09:00:00"), 
-           xmax = as.POSIXct("2017-04-18 09:15:00"), 
+           xmin = as.POSIXct("2017-04-18 09:00:00", tz = "America/Chicago"), 
+           xmax = as.POSIXct("2017-04-18 09:15:00", tz = "America/Chicago"), 
            ymin = 0, 
            ymax = 100, alpha = .2) +
   annotate("text", 
-           x = as.POSIXct("2017-04-18 09:00:00"), 
+           x = as.POSIXct("2017-04-18 09:00:00", tz = "America/Chicago"), 
            y = 100,
            label = c("Ben Golub: Day 1 keynote")
            ) 
@@ -279,22 +280,22 @@ myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-04-19"],
                                 facetForm = c("isRetweetLab ~ .")
                                 )
 myPlot <- myPlot + annotate("rect", 
-           xmin = as.POSIXct("2017-04-19 09:00:00"), 
-           xmax = as.POSIXct("2017-04-19 10:30:00"), 
+           xmin = as.POSIXct("2017-04-19 09:00:00",tz = "America/Chicago"), 
+           xmax = as.POSIXct("2017-04-19 10:30:00",tz = "America/Chicago"), 
            ymin = 0, 
            ymax = 80, alpha = .2) +
   annotate("text", 
-           x = as.POSIXct("2017-04-19 09:00:00"), 
+           x = as.POSIXct("2017-04-19 09:00:00",tz = "America/Chicago"), 
            y = 90,
            label = c("Day 2: General session 1")
            ) +
   annotate("rect", 
-           xmin = as.POSIXct("2017-04-19 16:45:00"), 
-           xmax = as.POSIXct("2017-04-19 17:30:00"), 
+           xmin = as.POSIXct("2017-04-19 16:45:00",tz = "America/Chicago"), 
+           xmax = as.POSIXct("2017-04-19 17:30:00",tz = "America/Chicago"), 
            ymin = 0, 
            ymax = 80, alpha = .2) +
   annotate("text", 
-           x = as.POSIXct("2017-04-19 16:45:00"), 
+           x = as.POSIXct("2017-04-19 16:45:00",tz = "America/Chicago"), 
            y = 90,
            label = c("Day 2: Cool Hacks")
            )
@@ -431,32 +432,32 @@ myPlot <- ggplot(plotDT, aes(x = obsDateTime5m)) +
 #ggplotly(myPlot)
 ymax <- uniqueN(plotDT$screenName)
 myPlot + annotate("rect", 
-           xmin = as.POSIXct("2017-04-18 09:00:00"), 
-           xmax = as.POSIXct("2017-04-18 09:15:00"), 
+           xmin = as.POSIXct("2017-04-18 09:00:00",tz = "America/Chicago"), 
+           xmax = as.POSIXct("2017-04-18 09:15:00",tz = "America/Chicago"), 
            ymin = 0, 
            ymax = ymax, alpha = .2) +
   annotate("text", 
-           x = as.POSIXct("2017-04-18 09:00:00"), 
+           x = as.POSIXct("2017-04-18 09:00:00",tz = "America/Chicago"), 
            y = ymax - 10,
            label = c("Ben Golub: Day 1 keynote")
            ) +
   annotate("rect", 
-           xmin = as.POSIXct("2017-04-19 09:00:00"), 
-           xmax = as.POSIXct("2017-04-19 10:30:00"), 
+           xmin = as.POSIXct("2017-04-19 09:00:00",tz = "America/Chicago"), 
+           xmax = as.POSIXct("2017-04-19 10:30:00",tz = "America/Chicago"), 
            ymin = 0, 
            ymax = ymax, alpha = .2) +
   annotate("text", 
-           x = as.POSIXct("2017-04-19 09:00:00"), 
+           x = as.POSIXct("2017-04-19 09:00:00",tz = "America/Chicago"), 
            y = ymax-10,
            label = c("Day 2: General session 1")
            ) +
   annotate("rect", 
-           xmin = as.POSIXct("2017-04-19 16:45:00"), 
-           xmax = as.POSIXct("2017-04-19 17:30:00"), 
+           xmin = as.POSIXct("2017-04-19 16:45:00",tz = "America/Chicago"), 
+           xmax = as.POSIXct("2017-04-19 17:30:00",tz = "America/Chicago"), 
            ymin = 0, 
            ymax = ymax, alpha = .2) +
   annotate("text", 
-           x = as.POSIXct("2017-04-19 16:45:00"), 
+           x = as.POSIXct("2017-04-19 16:45:00",tz = "America/Chicago"), 
            y = ymax-10,
            label = c("Day 2: Cool Hacks")
            )
@@ -504,32 +505,32 @@ myPlot <- ggplot(plotDT, aes(x = obsDateTime5m)) +
 #ggplotly(myPlot)
 ymax <- uniqueN(plotDT$screenName)
 myPlot + annotate("rect", 
-           xmin = as.POSIXct("2017-04-18 09:00:00"), 
-           xmax = as.POSIXct("2017-04-18 09:15:00"), 
+           xmin = as.POSIXct("2017-04-18 09:00:00",tz = "America/Chicago"), 
+           xmax = as.POSIXct("2017-04-18 09:15:00",tz = "America/Chicago"), 
            ymin = 0, 
            ymax = ymax, alpha = .2) +
   annotate("text", 
-           x = as.POSIXct("2017-04-18 09:00:00"), 
+           x = as.POSIXct("2017-04-18 09:00:00",tz = "America/Chicago"), 
            y = ymax - 1,
            label = c("Ben Golub: Day 1 keynote")
            ) +
   annotate("rect", 
-           xmin = as.POSIXct("2017-04-19 09:00:00"), 
-           xmax = as.POSIXct("2017-04-19 10:30:00"), 
+           xmin = as.POSIXct("2017-04-19 09:00:00",tz = "America/Chicago"), 
+           xmax = as.POSIXct("2017-04-19 10:30:00",tz = "America/Chicago"), 
            ymin = 0, 
            ymax = ymax, alpha = .2) +
   annotate("text", 
-           x = as.POSIXct("2017-04-19 09:00:00"), 
+           x = as.POSIXct("2017-04-19 09:00:00",tz = "America/Chicago"), 
            y = ymax-1,
            label = c("Day 2: General session 1")
            ) +
   annotate("rect", 
-           xmin = as.POSIXct("2017-04-19 16:45:00"), 
-           xmax = as.POSIXct("2017-04-19 17:30:00"), 
+           xmin = as.POSIXct("2017-04-19 16:45:00",tz = "America/Chicago"), 
+           xmax = as.POSIXct("2017-04-19 17:30:00",tz = "America/Chicago"), 
            ymin = 0, 
            ymax = ymax, alpha = .2) +
   annotate("text", 
-           x = as.POSIXct("2017-04-19 16:45:00"), 
+           x = as.POSIXct("2017-04-19 16:45:00",tz = "America/Chicago"), 
            y = ymax-1,
            label = c("Day 2: Cool Hacks")
            )
