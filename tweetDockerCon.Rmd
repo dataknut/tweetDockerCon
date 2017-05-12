@@ -1,5 +1,5 @@
 ---
-title: "#DockerCon 2017"
+title: "#DockerCon 2017: Tweet Analysis"
 author: "Ben Anderson (b.anderson@soton.ac.uk `@dataknut`)"
 date: 'Last run at: `r Sys.time()`'
 output:
