@@ -1,12 +1,12 @@
 # tweetDockerCon17: visualisation of tweeting behaviour at DockerCon 2017 USA (April) & EU (October).
 
-We are collecting &amp; visualising #dockercon tweets for the entire week of these conferences, saving them to an archive and then running them through some R processing & analysis code. The chart below is a simple visualisation of the tweetFlow (TM :-) of tweets and re-tweets on Day 1 of the Austin 2017 confeirence with the first keynote session 'grey-lighted'.
+We are collecting &amp; visualising #dockercon tweets for the entire week of these conferences, saving them to an archive and then running them through some R processing & analysis code. The chart below is a simple visualisation of the tweetFlow (TM :-) of tweets and re-tweets on Day 1 of the Austin 2017 conference with the first keynote session 'grey-lighted'.
 
 ![DockerCon Day 1 tweetFlow](day1.png)
 
 For full results (to date) which include all days, more days, tweeing locations, zoomable charts and visualisations of tweetStreaks by the most prolific tweeters see:
 
- * Dockercon April 2017: Latest [results](tweetDockerCon.html) - be careful, some of the inline charts are quite big.
+ * Dockercon April 2017: Latest [results](https://dataknut.github.io/tweetDockerCon/tweetDockerCon.html) - be careful, some of the inline charts are quite big.
  * Dockercon EU October 2017: Latest [results](tweetDockerConEU_2017.html) - be careful, some of the inline charts are quite big.
  
 To make comments or analysis requests, raise an issue: 
