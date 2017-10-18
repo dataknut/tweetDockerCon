@@ -194,7 +194,7 @@ tweetListDT <- tweetListDT[as.Date(obsDateTimeMins) >= as.Date("2017-10-15", tz 
 names(tweetListDT)
 ```
 
-The table has `r ba_tidyNum(nrow(tweetListDT[isRetweet == "FALSE"]))` tweets (and `r ba_tidyNum(nrow(tweetListDT[isRetweet == "TRUE"]))` re-tweets) from `r ba_tidyNum(uniqueN(tweetListDT$screenName))` tweeters between `r min(tweetListDT$createdLocal)` and `r max(tweetListDT$createdLocal)` (Central District Time).
+The table has `r ba_tidyNum(nrow(tweetListDT[isRetweet == "FALSE"]))` tweets (and `r ba_tidyNum(nrow(tweetListDT[isRetweet == "TRUE"]))` re-tweets) from `r ba_tidyNum(uniqueN(tweetListDT$screenName))` tweeters between `r min(tweetListDT$createdLocal)` and `r max(tweetListDT$createdLocal)` (Central European Time).
 
 # Analysis
 
@@ -248,7 +248,6 @@ myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-10-17"],
                                 byVars = c("obsDateTime5m,isRetweetLab"),
                                 facetForm = c("isRetweetLab ~ .")
                                 )
-myPlot
 
 
 ggplotly(myPlot)
@@ -265,7 +264,6 @@ myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-10-18"],
                                 byVars = c("obsDateTime5m,isRetweetLab"),
                                 facetForm = c("isRetweetLab ~ .")
                                 )
-myPlot 
 
 
 ggplotly(myPlot)
@@ -274,6 +272,8 @@ ggplotly(myPlot)
 
 ### Day 4 - Thursday (Main Day 3)
 
+If you see nothing, nothing happened yet :-)
+
 ```{r day4Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
 myCaption <- paste0("All (re)tweets containing #dockercon Thursday 19th October 2017")
 myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-10-19"], 
@@ -281,10 +281,9 @@ myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-10-19"],
                                 facetForm = c("isRetweetLab ~ .")
                                 )
 if(max(tweetListDT$obsDate > "2017-10-18")){ # catch if no data
-  try(myPlot)
+  try(ggplotly(myPlot))
 }
 
-#ggplotly(myPlot)
 ```
 
 
