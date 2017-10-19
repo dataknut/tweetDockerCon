@@ -1,4 +1,4 @@
-# Collect the twitter data for dockercon EU October 2017
+# Collect hashtagged twitter data for a given series of dates
 library(data.table)
 library(twitteR)
 library(readr)
@@ -10,68 +10,27 @@ library(readr)
 # are less than this but not a warning if there are more!!
 maxTweets <- 10000 # let's hope this is enough!
 
-tweetListD1DT <- data.table(twListToDF(searchTwitter("#dockercon", 
-                                        since = "2017-10-16", # exclusive - NB this is UTC
-                                        until = "2017-10-17", # inclusive - NB this is UTC
-                                        n=maxTweets) 
-                                     )
+# we're going to loop through the possible days 1 day at a time
+startDay <- as.Date("2017-10-15") # DockerConEU 2017 - allow for pre-conf excitement :-)
+endDay <- as.Date("2017-10-20") # allow for post conf excitement
+hashTag <- "#dockercon"
+filename <- "dockerConEU2017_tweets"
+
+tweetsDT <- as.data.table(NULL) # data collector
+days <- seq(startDay, endDay, by = "day")
+for(d in days){
+  print(paste0("Searching ", as.Date.IDate(d), " for ", hashTag))
+  s <-  as.Date.IDate(d)
+  e <- as.Date.IDate(d+1)
+  dt <- data.table(twListToDF(searchTwitter(hashTag, 
+                                                  since = as.character(s), # exclusive - NB this is UTC
+                                                  until = as.character(e), # inclusive - NB this is UTC
+                                                  n=maxTweets)
                               )
-# save it out
-print("Saving day 1")
-write_csv(tweetListD1DT, "dockerConEU2017tweetListD1DT.csv")
-
-tweetListD2DT <- data.table(twListToDF(searchTwitter("#dockercon", 
-                                                     since = "2017-10-17", # exclusive - NB this is UTC
-                                                     until = "2017-10-18", # inclusive - NB this is UTC
-                                                     n=maxTweets) 
-                                       )
-)
+                   )
+  rbind(dt,tweetsDT)
+}
 
 # save it out
-print("Saving day 2")
-write_csv(tweetListD2DT, "dockerConEU2017tweetListD2DT.csv")
-
-tweetListD3DT <- data.table(twListToDF(searchTwitter("#dockercon", 
-                                                     since = "2017-10-18", # exclusive - NB this is UTC
-                                                     until = "2017-10-19", # inclusive - NB this is UTC
-                                                     n=maxTweets) 
-)
-)
-
-# save it out
-print("Saving day 3")
-write_csv(tweetListD3DT, "dockerConEU2017tweetListD3DT.csv")
-
-
-tweetListD4DT <- data.table(twListToDF(searchTwitter("#dockercon", 
-                                                     since = "2017-10-19", # exclusive - NB this is UTC
-                                                     until = "2017-10-20", # inclusive - NB this is UTC
-                                                     n=maxTweets) 
-)
-)
-
-# save it out
-print("Saving day 4")
-write_csv(tweetListD4DT, "dockerConEU2017tweetListD4DT.csv")
-
-tweetListD5DT <- data.table(twListToDF(searchTwitter("#dockercon", 
-                                                     since = "2017-10-20", # exclusive - NB this is UTC
-                                                     until = "2017-10-21", # inclusive - NB this is UTC
-                                                     n=maxTweets) 
-)
-)
-
-# save it out
-print("Saving day 5")
-write_csv(tweetListD5DT, "dockerConEU2017tweetListD5DT.csv")
-
-tweetListD6DT <- data.table(twListToDF(searchTwitter("#dockercon", 
-                                                     since = "2017-10-21", # exclusive - NB this is UTC
-                                                     until = "2017-10-22", # inclusive - NB this is UTC
-                                                     n=maxTweets) 
-)
-)
-
-# save it out
-print("Saving day 6")
-write_csv(tweetListD6DT, "dockerConEU2017tweetListD6DT.csv")
+print("Saving tweets")
+write_csv(tweetsDT, paste0(filename,".csv"))
