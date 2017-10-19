@@ -1,6 +1,6 @@
 ---
 title: "#DockerCon EU 2017: Tweet Analysis"
-author: "Ben Anderson (b.anderson@soton.ac.uk `@dataknut`) & Finnian Anderson ()"
+author: "Ben Anderson (`@dataknut`) & Finnian Anderson (`@developius`)"
 date: 'Last run at: `r Sys.time()`'
 output:
   html_document:
