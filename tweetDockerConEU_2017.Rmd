@@ -313,12 +313,12 @@ myPlot
 
 So let's re-do that for the top 50 tweeters so we can see their tweetStreaks!
 
-```{r screenNameTop50, fig.height=8,fig.cap="N tweets per 5 minutes by screen name (top 50, most prolific tweeters at bottom)"}
+```{r screenNameTop50, fig.height=8,fig.cap="N tweets per 5 minutes by screen name (top 50, reverse alphabetical)"}
 myCaption <- paste0("All (re)tweets containing #dockercon ", 
                       min(as.Date(tweetListDT$obsDateTime5m)),
                           " to ",
                           max(as.Date(tweetListDT$obsDateTime5m)),
-                    "\nOrdered by most frequent tweeters (bottom)"
+                    "\nReverse alphabetical"
                           )
 
 matchDT <- head(allTweetersDT,50)
@@ -331,10 +331,9 @@ tempDT <- merge(tweetListDT, matchDT)
 plotDT <- tempDT[matchDT, 
                     .(
                       nTweets = .N
-                    ), by = .(screenName, obsDateTime5m, maxT)]
+                    ), keyby = .(maxT,screenName, obsDateTime5m)]
 
-plotDT <- plotDT[order(-plotDT$maxT,plotDT$obsDateTime5m)]
-#plotDT$screenName <- factor(plotDT$screenName,levels=plotDT$screenName)
+plotDT <- plotDT[order(plotDT$screenName,plotDT$maxT)]
 
 myPlot <- ggplot(plotDT, aes(x = obsDateTime5m)) +
     geom_tile(aes(y = screenName, fill = nTweets)) +
