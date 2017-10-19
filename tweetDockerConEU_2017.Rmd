@@ -1,6 +1,6 @@
 ---
-title: "#DockerCon 2017: Tweet Analysis"
-author: "Ben Anderson (b.anderson@soton.ac.uk `@dataknut`)"
+title: "#DockerCon EU 2017: Tweet Analysis"
+author: "Ben Anderson (b.anderson@soton.ac.uk `@dataknut`) & Finnian Anderson ()"
 date: 'Last run at: `r Sys.time()`'
 output:
   html_document:
@@ -31,128 +31,44 @@ rm(list=ls(all=TRUE)) # remove all objects from workspace
 
 # Set start time ----
 startTime <- proc.time()
-```
 
-```{r setFunctions}
-# Functions used
-
-# This is a function to install any packages that are not present
-# Especially useful when running on virtual machines where package installation is not persistent. Like UoS sve :-(
-# It will fail if the packages need to be installed but there is no internet access
-# Courtesy of Luke Blunden
-lb_myRequiredPackages <- function(x,y){
-  for( i in x ){
-    #  require returns TRUE if it was able to load package
-    if( ! require( i , character.only = TRUE ) ){
-      #  If package was not able to be loaded then re-install
-      install.packages( i , repos=y , 
-                        #type="win.binary" , comment out so runs on OS X etc
-                        quiet=TRUE , dependencies = TRUE , verbose = FALSE )
-      #  Load package after installing
-      require( i , character.only = TRUE, quietly = TRUE )
-    }
+# default code location - needed to load functions & parameters correctly so 
+# has to be run here and not in the functions file as we can't find the functions file without it!
+# use Mikey Harper's code to work out where we are
+# only problem with this is that if you print projLoc this will reveal the full path (including username) in any output document
+mh_findParentDirectory <- function(Parent){
+  directory <-getwd()
+  while(basename(directory) != Parent){
+    directory <- dirname(directory)
+    
   }
+return(directory)
 }
 
-ba_tidyNum <- function(number) { 
-  # puts commas in a long number and stops scientific format
-  format(number, big.mark=",", scientific=FALSE)
-}
+projLoc <- mh_findParentDirectory("tweetDockerCon")
 
-# some things we'll use later
-ba_setUseFullTimes <- function(dt){
-  # set to central time
-  dt <- dt[, createdLocal := with_tz(created, tz = "CET")] # local
-  # convert created to minutes
-  dt <- dt[,
-           obsDateTimeMins := floor_date(createdLocal, # requires lubridate
-                                         unit="minutes"
-           )
-           ]
-    dt <- dt[,
-           obsDateTimeHours := floor_date(createdLocal, # requires lubridate
-                                         unit="hours"
-           )
-           ]
-  dt <- dt[,
-           obsDateTime5m := floor_date(createdLocal, # requires lubridate
-                                         unit="5 minutes"
-           )
-           ]
-  dt <- dt[,
-           obsDateTime10m := floor_date(createdLocal, # requires lubridate
-                                         unit="10 minutes"
-           )
-           ] 
-  dt <- dt[,
-           obsDateTime15m := floor_date(createdLocal, # requires lubridate
-                                         unit="15 minutes"
-           )
-           ] 
-  
-  dt <- dt[, obsDate := as.Date(obsDateTimeMins, tz = "America/Chicago")]
+# Functions ----
+print(paste0("Loading functions from ", projLoc,"/twitterFunctions.R"))
+source(paste0(projLoc,"/twitterFunctions.R"))
 
-  # test
-  #t <- tweetListDT[, .(createdLocal, obsDate, obsDateTimeMins)]
-  
-  dt <- dt[, isRetweetLab := ifelse(isRetweet == "FALSE",
-                                    "Original tweet",
-                                    "Re-tweet"
-                                    )
-           ]
-  # check
-  #table(tweetListDT$isRetweet,tweetListDT$isRetweetLab)
-  return(dt)
-}
-
-ba_make5MinTimeSeriesChart <- function(dt,byVars,facetForm){
-  # obsDateTime5m must be one of the byVars
-  # whatever is in facetForm must also be in byVars
-  plotDT <- dt[,
-                 .(
-                   nTweets = .N,
-                   nTweeters = uniqueN(screenName)
-                 ), by = eval(byVars)
-               ]
-  
-
-  myPlot <- ggplot(plotDT, aes(x = obsDateTime5m)) +
-    geom_line(aes(y = nTweets, colour = "N tweets")) +
-    geom_line(aes(y = nTweeters, colour = "N tweeters")) +
-    facet_grid(eval(facetForm)) +
-    theme(strip.text.y = element_text(size = 9, colour = "black", angle = 90)) +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5)) +
-    scale_x_datetime(date_breaks = "2 hours", date_labels ="%a %d %b %H:%M") +
-    theme(legend.position = "bottom") +
-    theme(legend.title = element_blank()) +
-    labs(caption = myCaption,
-         x = "Time",
-         y = "Count"
-    )
-  return(myPlot)
-}
-```
-
-```{r setPackages}
-# Load libraries ----
-# Use the function to load the libraries required by this script
-reqLibs <- c("data.table", # fast data munching
-             "lubridate", # for date manipulation
-             "ggplot2", # fancy graphs
-             "readr", # fast data loading e.g. read_csv
-             "plotly", # scalable graphs in .js
-             "knitr" # for kable
-)
+# Libraries ----
+# Libs for functions set in twitterFunctions.R
+# additional libs required by this code
+reqLibs <- c("ggplot2", "plotly", "knitr")
 
 print(paste0("Loading the following libraries using lb_myRequiredPackages: ", reqLibs))
 # Use Luke's function to require/install/load
 lb_myRequiredPackages(reqLibs,"http://cran.rstudio.com/")
-
-# uncomment to install twitteR if needed
-#library(devtools)
-#install_github("twitteR", username="geoffjentry", force = TRUE)
-library(twitteR)
 ```
+
+```{r set parameters}
+startDay <- as.Date("2017-10-15") # DockerConEU 2017 - allow for pre-conf excitement :-)
+endDay <- as.Date("2017-10-20") # allow for post conf excitement
+hashTag <- "#dockercon"
+oFile <- "~/Data/twitter/dockerConEU2017_tweets" # where the results are saved (do not include suffix)
+timeZone <- "CET" # important if you are not on UTC!
+```
+
 
 # Purpose
 
@@ -167,26 +83,27 @@ We used the Twitter search API to extract 'all' tweets with the `#dockercon` has
 It is therefore possible that not quite all tweets have been extracted although it seems likely that we have captured most `human` tweeting which was our main intention. Future work should instead use the Twitter [streaming API](https://dev.twitter.com/streaming/overview).
 
 # Load Data
-Data should have been already downloaded using `collectData.R`. This produces a data table with the following variables (after some processing):
+
+You can either collect data from scratch (takes a while) or load the pre-collected data (have to remember to re-run it :-)
+
+This produces a data table with the following variables (after some processing):
 
 ```{r loadData}
-tweetListDT <- data.table()
+#tweetListDT <- ba_collectTweets(startDay, endDay, hashTag, oFile)
 
-# load the 6 days of data (due to twitter search being in UTC)
-for(d in 1:6){
-  try(file <- paste0("dockerConEU2017tweetListD", d, "DT.csv"))
-  try(tweetListDT <- rbind(tweetListDT,data.table(read_csv(file))))
-}
+# or load from pre-collected if you are getting rate limited
+f <- paste0(oFile,"_allTweets.csv")
+try(tweetListDT <- as.data.table(read_csv(f)))
 
 #tweetListDT <- data.table(read_csv("tweetListDT.csv")) # requires readr, auto-parses dateTimes nicely
 
-# add stuff (especially dates & times corrected to local Austin time)
+# add stuff (especially dates & times)
 tweetListDT <- ba_setUseFullTimes(tweetListDT)
 
 # keep the data within the time period of interest
-# note that this selects according to CDT which seems the most relevant
-tweetListDT <- tweetListDT[as.Date(obsDateTimeMins) >= as.Date("2017-10-15", tz = "CET") &
-                             as.Date(obsDateTimeMins) <= as.Date("2017-10-19", tz = "CET")
+# note that this selects according to CET which seems the most relevant
+tweetListDT <- tweetListDT[as.Date(obsDateTimeMins) >= as.Date("2017-10-15", tz = timeZone) &
+                             as.Date(obsDateTimeMins) <= as.Date("2017-10-19", tz = timeZone)
                              ]
 
 
@@ -210,14 +127,45 @@ myCaption <- paste0("All (re)tweets containing #dockercon ",
 
 ```{r allDaysChart, fig.height=8, fig.width=9, fig.cap=myCaption}
 
-myPlot <- ba_make5MinTimeSeriesChart(tweetListDT, 
-                                byVars = c("obsDateTime5m,isRetweetLab"),
-                                facetForm = c("isRetweetLab ~ .")
-                                )
+plotDT <- tweetListDT[, .(
+                 nTweets = .N,
+                 nTweeters = uniqueN(screenName)
+               ), keyby = .(obsHourMin,isRetweetLab,obsDate)]
+
+  myPlot <- ggplot(plotDT, aes(x = obsHourMin)) +
+    geom_line(aes(y = nTweets, colour = "N tweets")) +
+    geom_line(aes(y = nTweeters, colour = "N tweeters")) +
+    facet_grid(eval(obsDate ~ isRetweetLab)) +
+    theme(strip.text.y = element_text(size = 9, colour = "black", angle = 90)) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5)) +
+    scale_x_datetime(date_breaks = "2 hours", date_labels ="%H:%M") +
+    theme(legend.position = "bottom") +
+    theme(legend.title = element_blank()) +
+    labs(caption = myCaption,
+         x = "Time",
+         y = "Count"
+    )
 
 myPlot
 
 #ggplotly(myPlot)
+```
+
+### Day -1 - Sunday (Travel & setup)
+
+This plot is zoomable - try it!
+
+```{r day-1Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
+myCaption <- paste0("All (re)tweets containing #dockercon Sunday 15th October 2017")
+
+myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-10-15"], 
+                                byVars = c("obsDateTime5m,isRetweetLab"),
+                                facetForm = c("isRetweetLab ~ .")
+                                )
+
+#myPlot
+
+ggplotly(myPlot)
 ```
 
 ### Day 1 - Monday (Workshops)
@@ -286,6 +234,21 @@ if(max(tweetListDT$obsDate > "2017-10-18")){ # catch if no data
 
 ```
 
+### Day 5 - Friday (Main Day 4)
+
+If you see nothing, nothing happened yet :-)
+
+```{r day5Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
+myCaption <- paste0("All (re)tweets containing #dockercon Friday 20th October 2017")
+myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-10-20"], 
+                                byVars = c("obsDateTime5m,isRetweetLab"),
+                                facetForm = c("isRetweetLab ~ .")
+                                )
+if(max(tweetListDT$obsDate > "2017-10-19")){ # catch if no data
+  try(ggplotly(myPlot))
+}
+
+```
 
 ## Location (lat/long)
 We wanted to make a nice map but sadly we see that most tweets have no lat/long set.
@@ -411,6 +374,7 @@ Other R packages used:
  * readr - for nice data loading [@readr]
  * ggplot2 - for slick graphs [@ggplot2]
  * plotly - fancy, zoomable slick graphs [@plotly]
+ * twitteR - twitter API search [@twitteR]
  * knitr - to create this document [@knitr]
 
 # References
