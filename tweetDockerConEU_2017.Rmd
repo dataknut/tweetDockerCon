@@ -89,11 +89,13 @@ You can either collect data from scratch (takes a while) or load the pre-collect
 This produces a data table with the following variables (after some processing):
 
 ```{r loadData}
-#tweetListDT <- ba_collectTweets(startDay, endDay, hashTag, oFile)
+# set authentication
+source("setTwitterAuth.R")
+tweetListDT <- ba_collectTweets(startDay, endDay, hashTag, oFile)
 
 # or load from pre-collected if you are getting rate limited
 f <- paste0(oFile,"_allTweets.csv")
-try(tweetListDT <- as.data.table(read_csv(f)))
+#try(tweetListDT <- as.data.table(read_csv(f)))
 
 #tweetListDT <- data.table(read_csv("tweetListDT.csv")) # requires readr, auto-parses dateTimes nicely
 
