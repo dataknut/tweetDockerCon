@@ -91,13 +91,12 @@ This produces a data table with the following variables (after some processing):
 ```{r loadData}
 # set authentication
 source("setTwitterAuth.R")
-tweetListDT <- ba_collectTweets(startDay, endDay, hashTag, oFile)
-
+# collect tweets
+#tweetListDT <- ba_collectTweets(startDay, endDay, hashTag, oFile)
+  
 # or load from pre-collected if you are getting rate limited
 f <- paste0(oFile,"_allTweets.csv")
-#try(tweetListDT <- as.data.table(read_csv(f)))
-
-#tweetListDT <- data.table(read_csv("tweetListDT.csv")) # requires readr, auto-parses dateTimes nicely
+try(tweetListDT <- as.data.table(read_csv(f)))
 
 # add stuff (especially dates & times)
 tweetListDT <- ba_setUseFullTimes(tweetListDT)
