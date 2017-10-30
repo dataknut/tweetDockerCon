@@ -200,6 +200,7 @@ myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-10-30"],
 ggplotly(myPlot)
 ```
 
+Interesting that it picks up again around 08:30-09:00 as people tweet about the night before's viewing (& extensively re-tweet).
 
 ### B-Day +2 - Tuesday 31/11/2017 (more post-broadcast excitement)
 
@@ -339,7 +340,7 @@ elapsed <- t[[3]]
 
 Analysis completed in `r elapsed` seconds ( `r round(elapsed/60,2)` minutes) using [knitr](https://cran.r-project.org/package=knitr) in [RStudio](http://www.rstudio.com) with `r R.version.string` running on `r R.version$platform`.
 
-A special mention must go to `twitteR` [@twitteR] for the twitter API interaction functions and `lubridate` [@lubridate] which allows timezone manipulation without too many tears.
+A special mention must go to `twitteR` [@twitteR] for the twitter API interaction functions and `lubridate` [@lubridate] which allows time-zone manipulation without too many tears.
 
 Other R packages used:
 
