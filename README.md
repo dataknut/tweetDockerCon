@@ -1,5 +1,9 @@
 # tweetR: Experiments with twitter data visualisation
 
+Makes extensive use of:
+
+ * https://cran.r-project.org/web/packages/twitteR/index.html
+
 To make comments or analysis requests, raise an issue: 
  
  * See the [code](https://github.com/dataknut/tweetR).
