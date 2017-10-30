@@ -66,7 +66,7 @@ startDay <- as.Date("2017-10-28") #BluePlanet2 pre-start
 endDay <- as.Date("2017-10-31") # allow for post start excitement
 hashTag <- "#BluePlanet2"
 oFile <- "~/Data/twitter/BluePlanet2_tweets" # where the results are saved (do not include suffix)
-timeZone <- "CET" # important if you are not on UTC!
+timeZone <- "UTC" # important if you are not on UTC!
 ```
 
 
@@ -88,19 +88,19 @@ You can either collect data from scratch (takes a while) or load the pre-collect
 
 This produces a data table with the following variables (after some processing):
 
-```{r loadData}
-# set authentication
+```{r load Data}
+# set authentication ----
 source("setTwitterAuth.R")
-# collect tweets
-maxTweets <- 50000 # let's hope that's enough
-tweetListDT <- ba_collectTweets(maxTweets,startDay, endDay, hashTag, oFile)
+# collect tweets ----
+maxTweets <- 50000 # let's hope that's enough - just Sunday = 48k!
+#tweetListDT <- ba_collectTweets(maxTweets,startDay, endDay, hashTag, oFile)
   
-# or load from pre-collected if you are getting rate limited
+# or load from pre-collected if you are getting rate limited ----
 f <- paste0(oFile,"_allTweets.csv")
 try(tweetListDT <- as.data.table(read_csv(f)))
 
-# add stuff (especially dates & times)
-tweetListDT <- ba_setUseFullTimes(tweetListDT)
+# add stuff (especially dates & times) ----
+tweetListDT <- ba_setUseFullTimes(tweetListDT,timeZone)
 
 
 names(tweetListDT)
@@ -146,11 +146,15 @@ myPlot
 #ggplotly(myPlot)
 ```
 
+Although there had been some low level tweeting about #BluePlanet2 on Saturday, it exploded on Sunday evening as you'd expect.
+
+In the next sections we look day by day.
+
 ### B-Day -1: Saturday 28/10/2017
 
 This plot is zoomable - try it!
 
-```{r day-1Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
+```{r day-1 Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
 myCaption <- paste0("All (re)tweets containing #BluePlanet2 Saturday 28th October 2017")
 
 myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-10-28"], 
@@ -167,7 +171,7 @@ ggplotly(myPlot)
 
 This plot is zoomable - try it!
 
-```{r day1Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
+```{r day 1 Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
 myCaption <- paste0("All (re)tweets containing #BluePlanet2 Sunday 29th October 2017")
 
 myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-10-29"], 
@@ -235,17 +239,7 @@ One day we'll draw a map.
 
 Next we'll try by screen name.
 
-Top tweeters:
-
-```{r topTweeters}
-allTweetersDT <- tweetListDT[, .(nTweets = .N), by = screenName][order(-nTweets)]
-
-kable(caption = "Top 15 tweeters",
-      head(allTweetersDT, 15)
-      )
-```
-
-And here's a really bad visualisation of all of them tweeting over time! Each row of pixels is a tweeter (the names are illegible) and a green dot indicates a few tweets in the 5 minute period while a red dot indicates a lot of tweets.
+Here's a really bad visualisation of all tweeters tweeting over time. Each row of pixels is a tweeter (the names are illegible) and a green dot indicates a few tweets in the 5 minute period while a red dot indicates a lot of tweets.
 
 ```{r screenNameAll, fig.height=8,fig.cap="N tweets per 5 minutes by screen name"}
 myCaption <- paste0("All (re)tweets containing #dockercon ", 
@@ -276,7 +270,21 @@ myPlot <- ggplot(plotDT, aes(x = obsDateTime5m)) +
 myPlot
 ```
 
-So let's re-do that for the top 50 tweeters so we can see their tweetStreaks!
+Yeah, that worked well.
+
+So let's re-do that for the top 50 tweeters so we can see their tweetStreaks...
+
+Top tweeters:
+
+```{r topTweeters}
+allTweetersDT <- tweetListDT[, .(nTweets = .N), by = screenName][order(-nTweets)]
+
+kable(caption = "Top 15 tweeters (all days)",
+      head(allTweetersDT, 15)
+      )
+```
+
+And their tweetStreaks...
 
 ```{r screenNameTop50, fig.height=8,fig.cap="N tweets per 5 minutes by screen name (top 50, reverse alphabetical)"}
 myCaption <- paste0("All (re)tweets containing #dockercon ", 
@@ -318,6 +326,8 @@ myPlot <- ggplot(plotDT, aes(x = obsDateTime5m)) +
 
 myPlot 
 ```
+
+Spot the twitterBots...
 
 # About
 
