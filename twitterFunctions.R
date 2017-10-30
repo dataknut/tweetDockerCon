@@ -71,8 +71,8 @@ ba_tidyNum <- function(number) {
 }
 
 # some things we'll use later
-ba_setUseFullTimes <- function(dt){
-  # set to central time
+ba_setUseFullTimes <- function(dt,timeZone){
+  # set to time zone
   dt <- dt[, createdLocal := with_tz(created, tz = timeZone)] # local
   # convert created to minutes
   dt <- dt[,
