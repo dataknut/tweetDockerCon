@@ -14,7 +14,7 @@ Or better still, fork & DIY :-)
 
 ## tweetBluePlanet2: visualisation of tweeting behaviour around the BBC's Blue PLanet 2 programe (October - November 2017)
 
- * Latest [results](https://dataknut.github.io/tweetR/tweetRBluePlanet2_2017.html) - with missing data due to rate limiting :-(
+ * Latest [results](https://dataknut.github.io/tweetR/tweetRBluePlanet2_2017.html)
  
 ## tweetDockerCon17: visualisation of tweeting behaviour at DockerCon 2017 USA (April) & EU (October).
 
