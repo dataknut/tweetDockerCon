@@ -23,13 +23,13 @@ print(paste0("Loading the following libraries using lb_myRequiredPackages: ", re
 # Use Luke's function to require/install/load
 lb_myRequiredPackages(reqLibs,"http://cran.rstudio.com/")
 
-ba_collectTweets <- function(startDay, endDay, hashtag, oFile){
+ba_collectTweets <- function(maxTweets, startDay, endDay, hashtag, oFile){
   # Only results from the last week (7 days?) will be returned
   # https://dev.twitter.com/rest/public/search
   
   # this needs to be large enough to collect all of them - the API returns a warning if there 
   # are less than this but not a warning if there are more!!
-  maxTweets <- 10000 # let's hope this is enough!
+  maxTweets <- maxTweets # let's hope this is enough!
   
   # Collect hashtagged twitter data for a given series of dates
   # expects start date, end date (inclusive) and a hashtag
