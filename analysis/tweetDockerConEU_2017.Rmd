@@ -66,7 +66,7 @@ startDay <- as.Date("2017-10-15") # DockerConEU 2017 - allow for pre-conf excite
 endDay <- as.Date("2017-10-20") # allow for post conf excitement
 hashTag <- "#dockercon"
 oFile <- "~/Data/twitter/dockerConEU2017_tweets" # where the results are saved (do not include suffix)
-timeZone <- "CET" # important if you are not on UTC!
+timeZone <- "CET" # important if you are not on UTC! <sigh>
 ```
 
 

@@ -9,12 +9,13 @@ library(readr)
 # this needs to be large enough to collect all of them - the API returns a warning if there 
 # are less than this but not a warning if there are more!!
 maxTweets <- 10000 # let's hope this is enough!
+# No, it isn't
 
 # we're going to loop through the possible days 1 day at a time
-startDay <- as.Date("2017-10-15") # DockerConEU 2017 - allow for pre-conf excitement :-)
-endDay <- as.Date("2017-10-20") # allow for post conf excitement
-hashTag <- "#dockercon"
-filename <- "dockerConEU2017_tweets"
+startDay <- as.Date("2018-05-19") # 
+endDay <- as.Date("2018-05-20") # allow for post day excitement
+hashTag <- "#royalWedding"
+filename <- "royalWedding"
 
 tweetsDT <- as.data.table(NULL) # data collector
 days <- seq(startDay, endDay, by = "day")
@@ -33,4 +34,4 @@ for(d in days){
 
 # save it out
 print("Saving tweets")
-write_csv(tweetsDT, paste0(filename,".csv"))
+write_csv(tweetsDT, paste0("data/",filename,".csv"))

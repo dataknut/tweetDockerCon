@@ -1,0 +1,305 @@
+---
+title: "#Royal Wedding 2017: Tweet Analysis"
+author: "Ben Anderson (`@dataknut`))"
+date: 'Last run at: `r Sys.time()`'
+output:
+  html_document:
+    keep_md: yes
+    number_sections: yes
+    self_contained: no
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+bibliography: ~/bibliography.bib
+---
+```{r knitrSetUp, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE) # do not echo code
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(fig_caption = TRUE)
+knitr::opts_chunk$set(fig_height = 6) # default, make it bigger to stretch vertical axis
+knitr::opts_chunk$set(fig_width = 8) # full width
+knitr::opts_chunk$set(tidy = TRUE) # tidy up code in case echo = TRUE
+```
+
+```{r codeSetup, include=FALSE}
+# Housekeeping ----
+rm(list=ls(all=TRUE)) # remove all objects from workspace
+
+# Set start time ----
+startTime <- proc.time()
+
+# default code location - needed to load functions & parameters correctly so 
+# has to be run here and not in the functions file as we can't find the functions file without it!
+# use Mikey Harper's code to work out where we are
+# only problem with this is that if you print projLoc this will reveal the full path (including username) in any output document
+mh_findParentDirectory <- function(Parent){
+  directory <-getwd()
+  while(basename(directory) != Parent){
+    directory <- dirname(directory)
+    
+  }
+return(directory)
+}
+
+projLoc <- mh_findParentDirectory("tweetR")
+
+# Functions ----
+print(paste0("Loading functions from ", projLoc,"/twitterFunctions.R"))
+source(paste0(projLoc,"/twitterFunctions.R"))
+
+# Libraries ----
+# Libs for functions set in twitterFunctions.R
+# additional libs required by this code
+reqLibs <- c("ggplot2", "plotly", "knitr")
+
+print(paste0("Loading the following libraries using lb_myRequiredPackages: ", reqLibs))
+# Use Luke's function to require/install/load
+lb_myRequiredPackages(reqLibs,"http://cran.rstudio.com/")
+```
+
+```{r set parameters}
+startDay <- as.Date("2018-05-17") # DockerConEU 2017 - allow for pre-day excitement :-)
+endDay <- as.Date("2018-05-21") # allow for post day excitement
+hashTag <- "#royalwedding"
+maxTweets <- 1000000
+oFile <- "~/Data/twitter/royalWedding2017_tweets" # where the results are saved (do not include suffix)
+timeZone <- "UTC" # important if you are not on UTC!
+```
+
+
+# Purpose
+
+To extract and visualise tweets and re-tweets of `#royalwedding` for 17 - 21 May, 2018.
+
+Borrowing extensively from http://thinktostart.com/twitter-authentification-with-r/
+
+We used the Twitter search API to extract 'all' tweets with the `#dockercon` hashtag. As the [Twitter search API documentation](https://dev.twitter.com/rest/public/search) (sort of) makes clear this may not be `all` such tweets but merely the `most relevant` (whatever that means) from within a `sample` (whatever that means). 
+
+>"It allows queries against the indices of recent or popular Tweets and behaves similarly to, but not exactly like the Search feature available in Twitter mobile or web clients, such as Twitter.com search. The Twitter Search API searches against a sampling of recent Tweets published in the past 7 days." https://dev.twitter.com/rest/public/search, Accessed 12/5/2017
+
+It is therefore possible that not quite all tweets have been extracted although it seems likely that we have captured most `human` tweeting which was our main intention. Future work should instead use the Twitter [streaming API](https://dev.twitter.com/streaming/overview).
+
+# Load Data
+
+You can either collect data from scratch (takes a while) or load the pre-collected data (have to remember to re-run it :-)
+
+This produces a data table with the following variables (after some processing):
+
+```{r loadData}
+# set authentication
+source("setTwitterAuth.R")
+# collect tweets
+tweetListDT <- ba_collectTweets(maxTweets, as.Date(startDay),as.Date(endDay), hashTag, oFile)
+  
+# or load from pre-collected if you are getting rate limited
+#f <- paste0(oFile,"_allTweets.csv")
+#try(tweetListDT <- as.data.table(read_csv(f)))
+
+# add stuff (especially dates & times)
+tweetListDT <- ba_setUseFullTimes(tweetListDT)
+
+# keep the data within the time period of interest
+# note that this selects according to CET which seems the most relevant
+tweetListDT <- tweetListDT[as.Date(obsDateTimeMins) >= as.Date(startDay, tz = timeZone) &
+                             as.Date(obsDateTimeMins) <= as.Date(endDay, tz = timeZone)
+                             ]
+
+
+
+names(tweetListDT)
+```
+
+The table has `r ba_tidyNum(nrow(tweetListDT[isRetweet == "FALSE"]))` tweets (and `r ba_tidyNum(nrow(tweetListDT[isRetweet == "TRUE"]))` re-tweets) from `r ba_tidyNum(uniqueN(tweetListDT$screenName))` tweeters between `r min(tweetListDT$createdLocal)` and `r max(tweetListDT$createdLocal)` (Central European Time).
+
+# Analysis
+
+## Tweets and Tweeters over time
+
+```{r setCaptionTimeSeries}
+myCaption <- paste0("All (re)tweets containing #royalwedding ", 
+                      min(as.Date(tweetListDT$obsDateTime5m)),
+                          " to ",
+                          max(as.Date(tweetListDT$obsDateTime5m))
+                          )
+```
+
+```{r allDaysChart, fig.height=8, fig.width=9, fig.cap=myCaption}
+
+plotDT <- tweetListDT[, .(
+                 nTweets = .N,
+                 nTweeters = uniqueN(screenName)
+               ), keyby = .(obsHourMin,isRetweetLab,obsDate)]
+
+  myPlot <- ggplot(plotDT, aes(x = obsHourMin)) +
+    geom_line(aes(y = nTweets, colour = "N tweets")) +
+    geom_line(aes(y = nTweeters, colour = "N tweeters")) +
+    facet_grid(eval(obsDate ~ isRetweetLab)) +
+    theme(strip.text.y = element_text(size = 9, colour = "black", angle = 90)) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5)) +
+    scale_x_datetime(date_breaks = "2 hours", date_labels ="%H:%M") +
+    theme(legend.position = "bottom") +
+    theme(legend.title = element_blank()) +
+    labs(caption = myCaption,
+         x = "Time",
+         y = "Count"
+    )
+
+myPlot
+
+#ggplotly(myPlot)
+```
+
+### Day -1 - Friday
+
+This plot is zoomable - try it!
+
+```{r day-1Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
+myCaption <- paste0("All (re)tweets containing #dockercon Friday 18th May 2018")
+
+myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2018-05-18"], 
+                                byVars = c("obsDateTime5m,isRetweetLab"),
+                                facetForm = c("isRetweetLab ~ .")
+                                )
+
+myPlot
+
+#ggplotly(myPlot)
+```
+
+### Day 1 - Monday (Workshops)
+
+This plot is zoomable - try it!
+
+```{r day1Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
+myCaption <- paste0("All (re)tweets containing #dockercon Monday 16th October 2017")
+
+myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-10-16"], 
+                                byVars = c("obsDateTime5m,isRetweetLab"),
+                                facetForm = c("isRetweetLab ~ .")
+                                )
+
+#myPlot
+
+ggplotly(myPlot)
+```
+
+### Day 2 - Tuesday (Main Day 1)
+
+This plot is zoomable - try it!
+
+```{r day2Chart, fig.height=8, fig.width=9, fig.cap=myCaption}
+myCaption <- paste0("All (re)tweets containing #dockercon Tuesday 17th October 2017")
+
+myPlot <- ba_make5MinTimeSeriesChart(tweetListDT[obsDate == "2017-10-17"], 
+                                byVars = c("obsDateTime5m,isRetweetLab"),
+                                facetForm = c("isRetweetLab ~ .")
+                                )
+
+
+ggplotly(myPlot)
+```
+
+
+
+## Location (lat/long)
+We wanted to make a nice map but sadly we see that most tweets have no lat/long set.
+
+```{r latLongPlot}
+plotDT <- tweetListDT[, 
+                    .(
+                      nTweets = .N
+                    ), by = .(latitude, longitude)]
+kable(cap="All logged lat/long values",
+      plotDT)
+```
+
+One day we'll draw a map. 
+
+> NB: twitteR no longer returns twitter's best guess at 'location' :-(
+
+## Screen name
+
+Next we'll try by screen name.
+
+Top tweeters:
+
+```{r topTweeters}
+allTweetersDT <- tweetListDT[, .(nTweets = .N), by = screenName][order(-nTweets)]
+
+kable(caption = "Top 15 tweeters",
+      head(allTweetersDT, 15)
+      )
+```
+
+And here's a really bad visualisation of the top 50 tweeters so we can see their tweetStreaks!
+
+```{r screenNameTop50, fig.height=8,fig.cap="N tweets per 5 minutes by screen name (top 50, reverse alphabetical)"}
+myCaption <- paste0("All (re)tweets containing #royalwedding ", 
+                      min(as.Date(tweetListDT$obsDateTime5m)),
+                          " to ",
+                          max(as.Date(tweetListDT$obsDateTime5m)),
+                    "\nReverse alphabetical"
+                          )
+
+matchDT <- head(allTweetersDT,50)
+matchDT <- matchDT[, maxT := nTweets]
+setkey(matchDT, screenName)
+setkey(tweetListDT, screenName)
+
+tempDT <- merge(tweetListDT, matchDT)
+
+plotDT <- tempDT[matchDT, 
+                    .(
+                      nTweets = .N
+                    ), keyby = .(maxT,screenName, obsDateTime5m)]
+
+plotDT <- plotDT[order(plotDT$screenName,plotDT$maxT)]
+
+myPlot <- ggplot(plotDT, aes(x = obsDateTime5m)) +
+    geom_tile(aes(y = screenName, fill = nTweets)) +
+    theme(strip.text.y = element_text(size = 9, colour = "black", angle = 0)) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5)) +
+    #scale_x_reverse() + # fix reverse plotting of long
+    scale_x_datetime(date_breaks = "4 hours", date_labels ="%d %b %H:%M") +
+    scale_fill_gradient(low="green", high = "red") +
+    theme(legend.position = "bottom") +
+    theme(legend.title = element_blank()) +
+    labs(caption = myCaption,
+         x = "Time",
+         y = "Screen name"
+    )
+
+#ggplotly(myPlot)
+
+myPlot 
+```
+
+# About
+
+```{r check runtime}
+t <- proc.time() - startTime
+
+elapsed <- t[[3]]
+```
+
+Analysis completed in `r elapsed` seconds ( `r round(elapsed/60,2)` minutes) using [knitr](https://cran.r-project.org/package=knitr) in [RStudio](http://www.rstudio.com) with `r R.version.string` running on `r R.version$platform`.
+
+A special mention must go to `twitteR` [@twitteR] for the twitter API interaction functions and `lubridate` [@lubridate] which allows timezone manipulation without too many tears.
+
+Other R packages used:
+
+ * base R - for the basics [@baseR]
+ * data.table - for fast (big) data handling [@data.table]
+ * readr - for nice data loading [@readr]
+ * ggplot2 - for slick graphs [@ggplot2]
+ * plotly - fancy, zoomable slick graphs [@plotly]
+ * twitteR - twitter API search [@twitteR]
+ * knitr - to create this document [@knitr]
+
+# References
+
+
