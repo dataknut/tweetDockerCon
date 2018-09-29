@@ -13,4 +13,4 @@ library(twitteR)
 
 source("~/twitterAuthDataknut.R") # location of twitter secrets for dataknut
 
-setup_twitter_oauth(api_key,api_secret)
+twitteR::setup_twitter_oauth(api_key,api_secret)

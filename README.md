@@ -1,5 +1,9 @@
 # tweetR: Experiments with twitter data visualisation
 
+> Mostly broken: code not (yet) migrated to Twitter's new developer authentication API (July 25th 2018).
+
+> Try https://github.com/dataknut/hashTagR instead
+
 Makes extensive use of:
 
  * https://cran.r-project.org/web/packages/twitteR/index.html
