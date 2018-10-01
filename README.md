@@ -28,6 +28,6 @@ We are collecting &amp; visualising #dockercon tweets for the entire week of the
 
 For full results (to date) which include all days, more days, tweeing locations, zoomable charts and visualisations of tweetStreaks by the most prolific tweeters see:
 
- * Dockercon April 2017: Latest [results](https://dataknut.github.io/tweetR/tweetDockerCon.html) - be careful, some of the inline charts are quite big.
- * Dockercon EU October 2017: Latest [results](https://dataknut.github.io/tweetR/tweetDockerCon.html) - be careful, some of the inline charts are quite big.
+ * Dockercon EU October 2017: Latest [results](https://dataknut.github.io/tweetR/tweetDockerConEU_2017) - be careful, some of the inline charts are quite big.
+  * Dockercon April 2017: Latest [results](https://dataknut.github.io/tweetR/tweetDockerCon.html) - be careful, some of the inline charts are quite big.
  
